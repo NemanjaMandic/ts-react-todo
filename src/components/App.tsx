@@ -32,9 +32,19 @@ export class App extends React.Component<{}, UgaBuga>{
 		const filteredTasks: Array<ITask> = this.state.tasks.filter(
 			(task: ITask) =>  task.id !== id
 			);
-		
+
 		this.setState({
 			tasks: filteredTasks
+		})
+	}
+
+	public toggleDone(index: number): void{
+		let task: ITask[] = this.state.tasks.splice(index, 1);
+		task[0].completed = !task[0].completed;
+		debugger;
+		const currentTask: ITask[] = [...this.state.tasks, ...task];
+		this.setState({
+			tasks: currentTask
 		})
 	}
 
@@ -42,9 +52,10 @@ export class App extends React.Component<{}, UgaBuga>{
       return this.state.tasks.map( (task: ITask, index: number) => {
       	return(
 
-            <div key={ task.id }>
-            	<span> { task.value } </span>
+            <div key={ task.id } className="tdl-task">
+            	<span className={ task.completed ? "is-completed" : "" } > { task.value } </span>
             	<button onClick={() => this.deleteTask(task.id)}>Delete</button>
+            	<button onClick={() => this.toggleDone(index)} >{ task.completed ? "undo" : "Done" }</button>
 
             </div>
       	)
@@ -60,7 +71,8 @@ export class App extends React.Component<{}, UgaBuga>{
           	<form onSubmit={ (e) => this.handleSubmit(e) } >
 
           		<input 
-          		type="text" 
+          		type="text"
+          		className="tdl-input" 
           		placeholder="Add a Task" 
           		value={ this.state.currentTask }
           		onChange={(e) => this.setState({currentTask: e.target.value })} />
