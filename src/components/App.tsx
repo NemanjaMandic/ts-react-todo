@@ -10,21 +10,43 @@ export class App extends React.Component<{}, UgaBuga>{
 			tasks: []
 		}
 	}
-	handleSubmit(e: any){
+	public handleSubmit(e: React.FormEvent<HTMLFormElement>): void{
 		e.preventDefault();
         
 		this.setState({
-			tasks: [...this.state.tasks, this.state.currentTask]
+			tasks: [
+			...this.state.tasks, 
+			{
+				id: this._timeInMiliseconds(),
+				value: this.state.currentTask,
+				completed: false
+			}
+			
+			]
 		})
 
 		console.log(e)
 	}
 
-	renderTasks(){
-      return this.state.tasks.map( (s: string, index: number) => {
+	public deleteTask(id: number): void{
+		const filteredTasks: Array<ITask> = this.state.tasks.filter(
+			(task: ITask) =>  task.id !== id
+			);
+		
+		this.setState({
+			tasks: filteredTasks
+		})
+	}
+
+	public renderTasks(): JSX.Element[] {
+      return this.state.tasks.map( (task: ITask, index: number) => {
       	return(
 
-            <h3 key={index}> { s } </h3>
+            <div key={ task.id }>
+            	<span> { task.value } </span>
+            	<button onClick={() => this.deleteTask(task.id)}>Delete</button>
+
+            </div>
       	)
       })
 	}
@@ -53,9 +75,33 @@ export class App extends React.Component<{}, UgaBuga>{
 
 		);
 	}
+
+	private _timeInMiliseconds(): number{
+		const date: Date = new Date();
+		return date.getTime();
+	}
 }
 
 interface UgaBuga{
 	currentTask: string;
-	tasks: Array<string>;
+	tasks: Array<ITask>;
 }
+
+interface ITask {
+	id: number,
+	value: string,
+	completed: boolean
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
